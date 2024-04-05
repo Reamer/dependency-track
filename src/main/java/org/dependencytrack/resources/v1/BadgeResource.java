@@ -323,7 +323,12 @@ public class BadgeResource extends AlpineResource {
             if (!shouldBypassAuth && !passesAuthorization(qm)) {
                 return Response.status(Response.Status.FORBIDDEN).build();
             }
-            final Project project = qm.getProject(name, version);
+            final Project project;
+            if (StringUtils.equalsIgnoreCase("latest", version)) {
+                project = qm.getLatestProjectVersion(name);
+            } else {
+                project = qm.getProject(name, version);
+            }
             if (project != null) {
                 if (!shouldBypassAuth && !qm.hasAccess(super.getPrincipal(), project)) {
                     return Response.status(Response.Status.FORBIDDEN).entity("Access to the specified project is forbidden").build();
